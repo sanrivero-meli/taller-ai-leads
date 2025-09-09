@@ -352,39 +352,69 @@ p {
 /* Track line that connects steps */
 .how__rail {
   position: relative;
-  height: 16px;
+  height: 20px;
   margin: 0 auto clamp(20px,3vw,28px);
-  max-width: 960px;
+  max-width: 800px;
 }
 .how__rail-track,
 .how__rail-progress {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  height: 2px; left: 6%; right: 6%; border-radius: 1px;
+  position: absolute; 
+  top: 50%; 
+  transform: translateY(-50%);
+  height: 3px; 
+  left: 10%; 
+  right: 10%; 
+  border-radius: 2px;
 }
-.how__rail-track { background: var(--line); opacity: .6; }
+.how__rail-track { 
+  background: var(--line); 
+  opacity: 1; 
+}
 .how__rail-progress {
   background: var(--text);
   width: 0%;
-  transition: width 160ms linear; /* subtle */
+  transition: width 160ms linear;
+  z-index: 1;
 }
 
 /* Step items */
-.how__step { text-align: center; display: grid; gap: 10px; justify-items: center; }
-.how__num {
-  width: 44px; height: 44px; display: grid; place-content: center;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent; color: var(--text); font-weight: 600;
+.how__step { 
+  text-align: center; 
+  display: grid; 
+  gap: 12px; 
+  justify-items: center; 
 }
-.how__label { margin: 0; color: var(--text); }
-.how__step .how__label { color: var(--muted); }
+.how__num {
+  width: 48px; 
+  height: 48px; 
+  display: grid; 
+  place-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--surface); 
+  color: var(--muted); 
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 200ms ease;
+}
+.how__label { 
+  margin: 0; 
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
 
 /* Active states (when thresholds are reached) */
 .how__step.is-active .how__num {
-  background: var(--elevated);
-  box-shadow: 0 0 0 2px var(--elevated) inset, 0 0 0 1px var(--text) inset;
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+  transform: scale(1.05);
 }
-.how__step.is-active .how__label { color: var(--text); }
+.how__step.is-active .how__label { 
+  color: var(--text);
+  font-weight: 500;
+}
 
 /* Reduced motion: show as complete */
 @media (prefers-reduced-motion: reduce) {

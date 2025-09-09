@@ -266,66 +266,86 @@
  * Respects prefers-reduced-motion (shows fully active)
  */
 (function () {
-  const how = document.querySelector('.how');
-  if (!how) return;
+  function initStepper() {
+    const how = document.querySelector('.how');
+    if (!how) {
+      console.warn('Stepper: .how section not found');
+      return;
+    }
 
-  const rail = how.querySelector('.how__rail-progress');
-  const steps = Array.from(how.querySelectorAll('.how__step'));
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rail = how.querySelector('.how__rail-progress');
+    const steps = Array.from(how.querySelectorAll('.how__step'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+    console.log('Stepper initialized:', { how, rail, steps: steps.length, reduceMotion });
 
-  function updateProgress() {
-    const rect = how.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
-    // progress from when the section enters bottom to when it leaves top
-    const start = vh * 0.9;           // start filling when bottom nears viewport
-    const end = -rect.height * 0.2;   // finish a bit before leaving
-    const p = clamp((start - rect.top) / (start - end), 0, 1);
+    function updateProgress() {
+      const rect = how.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
 
-    // update rail width
-    if (rail) rail.style.width = (p * 100).toFixed(2) + '%';
+      // progress from when the section enters bottom to when it leaves top
+      const start = vh * 0.9;           // start filling when bottom nears viewport
+      const end = -rect.height * 0.2;   // finish a bit before leaving
+      const p = clamp((start - rect.top) / (start - end), 0, 1);
 
-    // activate steps at thresholds: 0, ~0.5, 1
-    const thresholds = [0.0, 0.5, 1.0];
-    steps.forEach((el, i) => {
-      if (p >= thresholds[i] - 0.001) el.classList.add('is-active');
-      else el.classList.remove('is-active');
-    });
+      console.log('Progress update:', { top: rect.top, progress: p });
+
+      // update rail width
+      if (rail) rail.style.width = (p * 100).toFixed(2) + '%';
+
+      // activate steps at thresholds: 0, ~0.5, 1
+      const thresholds = [0.0, 0.5, 1.0];
+      steps.forEach((el, i) => {
+        if (p >= thresholds[i] - 0.001) {
+          el.classList.add('is-active');
+        } else {
+          el.classList.remove('is-active');
+        }
+      });
+    }
+
+    if (reduceMotion) {
+      // Show complete state
+      if (rail) rail.style.width = '100%';
+      steps.forEach(el => el.classList.add('is-active'));
+      return;
+    }
+
+    // Observer to start/stop listeners when section is in view
+    const io = 'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              updateProgress();
+              window.addEventListener('scroll', onScroll, { passive: true });
+              window.addEventListener('resize', onResize);
+            } else {
+              window.removeEventListener('scroll', onScroll);
+              window.removeEventListener('resize', onResize);
+            }
+          });
+        }, { threshold: [0, 0.1, 0.5, 1] })
+      : null;
+
+    function onScroll() { requestAnimationFrame(updateProgress); }
+    function onResize() { requestAnimationFrame(updateProgress); }
+
+    if (io) {
+      io.observe(how);
+    } else {
+      // Fallback: always listen
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize);
+      updateProgress();
+    }
   }
 
-  if (reduceMotion) {
-    // Show complete state
-    if (rail) rail.style.width = '100%';
-    steps.forEach(el => el.classList.add('is-active'));
-    return;
-  }
-
-  // Observer to start/stop listeners when section is in view
-  const io = 'IntersectionObserver' in window
-    ? new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            updateProgress();
-            window.addEventListener('scroll', onScroll, { passive: true });
-            window.addEventListener('resize', onResize);
-          } else {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
-          }
-        });
-      }, { threshold: [0, 0.1, 0.5, 1] })
-    : null;
-
-  function onScroll() { requestAnimationFrame(updateProgress); }
-  function onResize() { requestAnimationFrame(updateProgress); }
-
-  if (io) io.observe(how);
-  else {
-    // Fallback: always listen
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-    updateProgress();
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStepper);
+  } else {
+    initStepper();
   }
 })();
