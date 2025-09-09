@@ -335,34 +335,60 @@ p {
   text-decoration: underline;
 }
 
-/* How it works section */
-.how-it-works {
-  padding: var(--space-3xl) 0;
+/* === HOW (scroll-synced stepper) ======================================= */
+.how { background: var(--surface); padding: clamp(32px,5vw,64px) 0; }
+.how__title { text-align:center; margin: 0 0 clamp(24px,3vw,40px); }
+
+/* Layout: steps in a row on tablet+, stacked on mobile */
+.how__steps {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: clamp(16px,2.5vw,24px);
+  grid-template-columns: 1fr; align-items: start;
+}
+@media (min-width: 768px) {
+  .how__steps { grid-template-columns: repeat(3, 1fr); }
 }
 
-.steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-2xl);
+/* Track line that connects steps */
+.how__rail {
+  position: relative;
+  height: 16px;
+  margin: 0 auto clamp(20px,3vw,28px);
+  max-width: 960px;
+}
+.how__rail-track,
+.how__rail-progress {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  height: 2px; left: 6%; right: 6%; border-radius: 1px;
+}
+.how__rail-track { background: var(--line); opacity: .6; }
+.how__rail-progress {
+  background: var(--text);
+  width: 0%;
+  transition: width 160ms linear; /* subtle */
 }
 
-.step {
-  text-align: center;
-}
-
-.step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: var(--surface);
-  color: var(--text);
-  border-radius: 50%;
-  font-weight: 600;
-  font-size: 1.25rem;
-  margin-bottom: var(--space-lg);
+/* Step items */
+.how__step { text-align: center; display: grid; gap: 10px; justify-items: center; }
+.how__num {
+  width: 44px; height: 44px; display: grid; place-content: center;
+  border-radius: 999px;
   border: 1px solid var(--line);
+  background: transparent; color: var(--text); font-weight: 600;
+}
+.how__label { margin: 0; color: var(--text); }
+.how__step .how__label { color: var(--muted); }
+
+/* Active states (when thresholds are reached) */
+.how__step.is-active .how__num {
+  background: var(--elevated);
+  box-shadow: 0 0 0 2px var(--elevated) inset, 0 0 0 1px var(--text) inset;
+}
+.how__step.is-active .how__label { color: var(--text); }
+
+/* Reduced motion: show as complete */
+@media (prefers-reduced-motion: reduce) {
+  .how__rail-progress { transition: none; }
 }
 
 /* Advantages grid → 3 horizontal cards */

@@ -93,23 +93,29 @@
             </div>
         </section>
 
-        <section class="how-it-works reveal-section">
+        <section class="how reveal-section" aria-labelledby="how-title">
             <div class="container">
-                <h2>Cómo funciona</h2>
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <p>Dejá tu e‑mail o celular.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <p>Validamos tu identidad con tu DNI/CUIT.</p>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <p>Listo: QR, prepaga y rendimientos.</p>
-                    </div>
+                <h2 id="how-title" class="how__title">Cómo funciona</h2>
+
+                <div class="how__rail" aria-hidden="true">
+                    <div class="how__rail-track"></div>
+                    <div class="how__rail-progress" style="width:0%"></div>
                 </div>
+
+                <ol class="how__steps" role="list">
+                    <li class="how__step" data-step="1">
+                        <span class="how__num" aria-hidden="true">1</span>
+                        <p class="how__label">Dejá tu e-mail o celular.</p>
+                    </li>
+                    <li class="how__step" data-step="2">
+                        <span class="how__num" aria-hidden="true">2</span>
+                        <p class="how__label">Validamos tu identidad con tu DNI/CUIT.</p>
+                    </li>
+                    <li class="how__step" data-step="3">
+                        <span class="how__num" aria-hidden="true">3</span>
+                        <p class="how__label">Listo: QR, prepaga y rendimientos.</p>
+                    </li>
+                </ol>
             </div>
         </section>
 
