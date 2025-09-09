@@ -241,6 +241,17 @@ p {
   transform: translateY(-1px);
 }
 
+.btn--secondary {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus {
+  background-color: var(--elevated);
+}
+
 .btn--large { 
   width:100%; 
   padding:14px 16px; 

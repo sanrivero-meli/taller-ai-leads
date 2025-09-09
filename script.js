@@ -28,50 +28,7 @@
     }, 0);
   }
 
-  // CTA Choice Panel functionality
-  function initCTAChoicePanel() {
-    const mainCTA = document.getElementById('main-cta');
-    const choicePanel = document.getElementById('cta-choice-panel');
-    const choiceButtons = choicePanel.querySelectorAll('.choice-btn');
-
-    if (!mainCTA || !choicePanel) return;
-
-    mainCTA.addEventListener('click', function() {
-      const isExpanded = mainCTA.getAttribute('aria-expanded') === 'true';
-      
-      if (!isExpanded) {
-        // Open panel
-        mainCTA.setAttribute('aria-expanded', 'true');
-        choicePanel.setAttribute('aria-hidden', 'false');
-        logAnalytics('cta_choice_open');
-        
-        // Handle click outside to close
-        handleClickOutside(choicePanel, function() {
-          mainCTA.setAttribute('aria-expanded', 'false');
-          choicePanel.setAttribute('aria-hidden', 'true');
-        });
-      } else {
-        // Close panel
-        mainCTA.setAttribute('aria-expanded', 'false');
-        choicePanel.setAttribute('aria-hidden', 'true');
-      }
-      
-      logAnalytics('hero_cta_click');
-    });
-
-    // Handle choice button clicks
-    choiceButtons.forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const type = this.getAttribute('data-type');
-        logAnalytics('cta_choice_click', { type });
-        
-        // Close panel after selection
-        mainCTA.setAttribute('aria-expanded', 'false');
-        choicePanel.setAttribute('aria-hidden', 'true');
-      });
-    });
-  }
+  // CTA Choice Panel functionality (now handled by new implementation at bottom)
 
   // Sticky CTA functionality
   function initStickyCTA() {
@@ -237,7 +194,6 @@
     }
 
     try {
-      initCTAChoicePanel();
       initStickyCTA();
       initSectionReveal();
       initMobileAppHandoff();
