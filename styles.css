@@ -365,71 +365,71 @@ p {
   border: 1px solid var(--line);
 }
 
-/* Advantages section */
+/* Advantages grid → 3 horizontal cards */
 .advantages {
-  padding: var(--space-3xl) 0;
-  background-color: var(--surface);
+  background: var(--bg);
+  padding: clamp(28px, 5vw, 56px) 0;
+  border-top: 1px solid var(--line);
 }
 
 .advantages__title {
   text-align: center;
-  margin-bottom: var(--space-3xl);
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  font-size: clamp(20px, 3.2vw, 28px);
 }
 
 .advantages__list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-2xl);
   list-style: none;
   margin: 0;
   padding: 0;
+  display: grid;
+  gap: clamp(12px, 2.5vw, 20px);
+  grid-template-columns: 1fr; /* stacked on mobile */
+}
+
+@media (min-width: 768px) {
+  .advantages__list {
+    grid-template-columns: repeat(3, 1fr); /* 3-up on tablet+ */
+  }
 }
 
 .advantages__item {
-  background-color: var(--elevated);
-  padding: var(--space-2xl);
-  border-radius: var(--radius);
+  background: var(--elevated);
   border: 1px solid var(--line);
-  text-align: center;
-  transition: transform var(--transition);
-}
-
-.advantages__item:hover {
-  transform: translateY(-2px);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2.8vw, 24px);
+  display: grid;
+  gap: 10px;
+  min-height: 160px;
+  box-shadow: 0 6px 16px var(--shadow);
 }
 
 .advantages__icon {
-  width: 64px;
-  height: 64px;
-  background-color: var(--surface);
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius);
+  background: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
   border: 1px solid var(--line);
-  margin: 0 auto var(--space-xl);
-  position: relative;
 }
 
-.advantages__icon::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--text);
+.advantages__h3 { 
+  margin: 0; 
+  font-size: clamp(16px, 2.4vw, 18px); 
 }
 
-.advantages__h3 {
-  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
-  font-weight: 600;
-  margin-bottom: var(--space-md);
-  color: var(--text);
+.advantages__p { 
+  margin: 0; 
+  color: var(--muted); 
+  line-height: 1.5; 
 }
 
-.advantages__p {
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.5;
+/* Subtle hover lift (optional) */
+@media (hover:hover) {
+  .advantages__item:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 8px 18px var(--shadow);
+  }
 }
 
 /* FAQ section */
