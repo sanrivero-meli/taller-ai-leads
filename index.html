@@ -26,13 +26,20 @@
                         <h1>Hacé más con tu plata, hoy.</h1>
                         <p class="hero-subtitle">Pagá con QR, usá tu tarjeta prepaga y mirá cómo tu saldo rinde.</p>
                         
-                        <button class="btn-primary" id="main-cta" aria-expanded="false">
+                        <!-- Main CTA -->
+                        <button id="cta-open"
+                                class="btn btn--primary"
+                                aria-controls="choice-panel"
+                                aria-expanded="false">
                             Abrir cuenta gratis
                         </button>
-                        
-                        <div class="cta-choice-panel" id="cta-choice-panel" aria-hidden="true">
-                            <button class="choice-btn" data-type="dni">Para mí (DNI)</button>
-                            <button class="choice-btn" data-type="cuit">Para mi negocio (CUIT)</button>
+
+                        <!-- Choice panel (inline, closed by default) -->
+                        <div id="choice-panel" class="choice-panel" aria-hidden="true">
+                            <div class="choice-panel__inner">
+                                <button class="btn btn--large">Para mí (DNI)</button>
+                                <button class="btn btn--large">Para mi negocio (CUIT)</button>
+                            </div>
                         </div>
                         
                         <p class="note">Para completar el alta te vamos a pedir tu DNI o CUIT.</p>
@@ -97,6 +104,7 @@
             <div class="container">
                 <h2 id="how-title" class="how__title">Cómo funciona</h2>
 
+                <!-- Connecting rail: track + progress (scroll-synced) -->
                 <div class="how__rail" aria-hidden="true">
                     <div class="how__rail-track"></div>
                     <div class="how__rail-progress" style="width:0%"></div>
@@ -105,7 +113,7 @@
                 <ol class="how__steps" role="list">
                     <li class="how__step" data-step="1">
                         <span class="how__num" aria-hidden="true">1</span>
-                        <p class="how__label">Dejá tu e-mail o celular.</p>
+                        <p class="how__label">Dejá tu email o celular.</p>
                     </li>
                     <li class="how__step" data-step="2">
                         <span class="how__num" aria-hidden="true">2</span>

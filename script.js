@@ -259,93 +259,80 @@
 
 })();
 
-/**
- * Scroll-synced stepper
- * Fills the progress bar across the 3 steps as the section comes into view
- * Activates circles at 0%, 50%, 100% thresholds
- * Respects prefers-reduced-motion (shows fully active)
- */
+/* === Scroll-synced stepper =========================================== */
 (function () {
-  function initStepper() {
-    const how = document.querySelector('.how');
-    if (!how) {
-      console.warn('Stepper: .how section not found');
-      return;
-    }
+  const how = document.querySelector('.how');
+  if (!how) return;
 
-    const rail = how.querySelector('.how__rail-progress');
-    const steps = Array.from(how.querySelectorAll('.how__step'));
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rail = how.querySelector('.how__rail-progress');
+  const steps = Array.from(how.querySelectorAll('.how__step'));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    console.log('Stepper initialized:', { how, rail, steps: steps.length, reduceMotion });
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+  function updateProgress(){
+    const rect = how.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
 
-    function updateProgress() {
-      const rect = how.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
+    const start = vh * 0.9;           // start filling as it enters
+    const end   = -rect.height * 0.2; // finish before exiting
+    const p = clamp((start - rect.top) / (start - end), 0, 1);
 
-      // progress from when the section enters bottom to when it leaves top
-      const start = vh * 0.9;           // start filling when bottom nears viewport
-      const end = -rect.height * 0.2;   // finish a bit before leaving
-      const p = clamp((start - rect.top) / (start - end), 0, 1);
+    if (rail) rail.style.width = (p * 100).toFixed(2) + '%';
+    const thresholds = [0.0, 0.5, 1.0];
+    steps.forEach((el, i) => el.classList.toggle('is-active', p >= thresholds[i]));
+  }
 
-      console.log('Progress update:', { top: rect.top, progress: p });
+  if (reduceMotion){
+    if (rail) rail.style.width = '100%';
+    steps.forEach(el => el.classList.add('is-active'));
+    return;
+  }
 
-      // update rail width
-      if (rail) rail.style.width = (p * 100).toFixed(2) + '%';
+  function onScroll(){ requestAnimationFrame(updateProgress); }
+  function onResize(){ requestAnimationFrame(updateProgress); }
 
-      // activate steps at thresholds: 0, ~0.5, 1
-      const thresholds = [0.0, 0.5, 1.0];
-      steps.forEach((el, i) => {
-        if (p >= thresholds[i] - 0.001) {
-          el.classList.add('is-active');
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting){
+          updateProgress();
+          window.addEventListener('scroll', onScroll, { passive:true });
+          window.addEventListener('resize', onResize);
         } else {
-          el.classList.remove('is-active');
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onResize);
         }
       });
-    }
-
-    if (reduceMotion) {
-      // Show complete state
-      if (rail) rail.style.width = '100%';
-      steps.forEach(el => el.classList.add('is-active'));
-      return;
-    }
-
-    // Observer to start/stop listeners when section is in view
-    const io = 'IntersectionObserver' in window
-      ? new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              updateProgress();
-              window.addEventListener('scroll', onScroll, { passive: true });
-              window.addEventListener('resize', onResize);
-            } else {
-              window.removeEventListener('scroll', onScroll);
-              window.removeEventListener('resize', onResize);
-            }
-          });
-        }, { threshold: [0, 0.1, 0.5, 1] })
-      : null;
-
-    function onScroll() { requestAnimationFrame(updateProgress); }
-    function onResize() { requestAnimationFrame(updateProgress); }
-
-    if (io) {
-      io.observe(how);
-    } else {
-      // Fallback: always listen
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onResize);
-      updateProgress();
-    }
-  }
-
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initStepper);
+    }, { threshold:[0, .1, .5, 1] });
+    io.observe(how);
   } else {
-    initStepper();
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onResize);
+    updateProgress();
   }
+})();
+
+/* === Choice panel toggle (CLS-safe) ======================= */
+(function () {
+  const mainCta = document.getElementById('cta-open');
+  const panel   = document.getElementById('choice-panel');
+  if (!mainCta || !panel) return;
+
+  function toggle(open){
+    panel.setAttribute('aria-hidden', String(!open));
+    mainCta.setAttribute('aria-expanded', String(open));
+  }
+
+  mainCta.addEventListener('click', ()=>{
+    const isOpen = panel.getAttribute('aria-hidden') === 'false';
+    toggle(!isOpen);
+    console.log('cta_choice_open', { open: !isOpen });
+  });
+
+  document.addEventListener('click', (e)=>{
+    if (!panel.contains(e.target) && e.target !== mainCta){
+      toggle(false);
+    }
+  });
 })();

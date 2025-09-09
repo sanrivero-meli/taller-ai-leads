@@ -215,9 +215,7 @@ p {
 }
 
 /* Buttons */
-.btn-primary,
-.btn-secondary,
-.choice-btn {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -232,55 +230,42 @@ p {
   min-height: 48px;
 }
 
-.btn-primary {
+.btn--primary {
   background-color: var(--text);
   color: var(--bg);
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
+.btn--primary:hover,
+.btn--primary:focus {
   opacity: 0.9;
   transform: translateY(-1px);
 }
 
-.btn-secondary {
+.btn--large { 
+  width:100%; 
+  padding:14px 16px; 
+  border-radius: var(--radius);
   background-color: var(--surface);
   color: var(--text);
   border: 1px solid var(--line);
 }
 
-.btn-secondary:hover,
-.btn-secondary:focus {
-  background-color: var(--elevated);
-}
-
-.choice-btn {
-  width: 100%;
-  background-color: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--line);
-}
-
-.choice-btn:hover,
-.choice-btn:focus {
+.btn--large:hover,
+.btn--large:focus {
   background-color: var(--elevated);
   border-color: var(--text);
 }
 
-/* CTA Choice Panel */
-.cta-choice-panel {
-  display: none;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  padding: var(--space-lg);
-  background-color: var(--surface);
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
+/* === Choice panel (CLS-safe) ============================== */
+.choice-panel{
+  overflow: hidden; max-height: 0; transition: max-height 180ms ease;
+  margin-top: 8px; /* subtle shim to avoid layout jump */
 }
-
-.cta-choice-panel[aria-hidden="false"] {
-  display: flex;
+.choice-panel[aria-hidden="false"]{ max-height: 220px; }
+.choice-panel__inner{
+  display:grid; gap:12px; background: var(--elevated);
+  border:1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 12px;
 }
 
 /* Features section */
@@ -335,157 +320,64 @@ p {
   text-decoration: underline;
 }
 
-/* === HOW (scroll-synced stepper) ======================================= */
+/* === HOW (scroll-synced stepper) ========================== */
 .how { background: var(--surface); padding: clamp(32px,5vw,64px) 0; }
-.how__title { text-align:center; margin: 0 0 clamp(24px,3vw,40px); }
+.how__title { text-align: center; margin: 0 0 clamp(24px,3vw,40px); }
 
-/* Layout: steps in a row on tablet+, stacked on mobile */
-.how__steps {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; gap: clamp(16px,2.5vw,24px);
-  grid-template-columns: 1fr; align-items: start;
+.how__rail { position: relative; height: 16px; margin: 0 auto clamp(20px,3vw,28px); max-width: 960px; }
+.how__rail-track, .how__rail-progress {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  left: 6%; right: 6%; height: 2px; border-radius: 1px;
 }
-@media (min-width: 768px) {
-  .how__steps { grid-template-columns: repeat(3, 1fr); }
-}
+.how__rail-track   { background: var(--line); opacity: .6; }
+.how__rail-progress{ background: var(--text); width: 0%; transition: width 160ms linear; }
 
-/* Track line that connects steps */
-.how__rail {
-  position: relative;
-  height: 20px;
-  margin: 0 auto clamp(20px,3vw,28px);
-  max-width: 800px;
+.how__steps{
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:clamp(16px,2.5vw,24px);
+  grid-template-columns:1fr; align-items:start;
 }
-.how__rail-track,
-.how__rail-progress {
-  position: absolute; 
-  top: 50%; 
-  transform: translateY(-50%);
-  height: 3px; 
-  left: 10%; 
-  right: 10%; 
-  border-radius: 2px;
-}
-.how__rail-track { 
-  background: var(--line); 
-  opacity: 1; 
-}
-.how__rail-progress {
-  background: var(--text);
-  width: 0%;
-  transition: width 160ms linear;
-  z-index: 1;
-}
+@media (min-width:768px){ .how__steps{ grid-template-columns: repeat(3,1fr); } }
 
-/* Step items */
-.how__step { 
-  text-align: center; 
-  display: grid; 
-  gap: 12px; 
-  justify-items: center; 
+.how__step{ text-align:center; display:grid; gap:10px; justify-items:center; }
+.how__num{
+  width:44px; height:44px; display:grid; place-content:center;
+  border-radius:999px; border:1px solid var(--line); background:transparent;
+  color:var(--text); font-weight:600;
 }
-.how__num {
-  width: 48px; 
-  height: 48px; 
-  display: grid; 
-  place-content: center;
-  border-radius: 50%;
-  border: 2px solid var(--line);
-  background: var(--surface); 
-  color: var(--muted); 
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 200ms ease;
-}
-.how__label { 
-  margin: 0; 
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-/* Active states (when thresholds are reached) */
-.how__step.is-active .how__num {
-  background: var(--text);
-  color: var(--bg);
-  border-color: var(--text);
-  transform: scale(1.05);
-}
-.how__step.is-active .how__label { 
-  color: var(--text);
-  font-weight: 500;
-}
-
-/* Reduced motion: show as complete */
-@media (prefers-reduced-motion: reduce) {
-  .how__rail-progress { transition: none; }
-}
-
-/* Advantages grid → 3 horizontal cards */
-.advantages {
-  background: var(--bg);
-  padding: clamp(28px, 5vw, 56px) 0;
-  border-top: 1px solid var(--line);
-}
-
-.advantages__title {
-  text-align: center;
-  margin: 0 0 clamp(20px, 3vw, 32px);
-  font-size: clamp(20px, 3.2vw, 28px);
-}
-
-.advantages__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: clamp(12px, 2.5vw, 20px);
-  grid-template-columns: 1fr; /* stacked on mobile */
-}
-
-@media (min-width: 768px) {
-  .advantages__list {
-    grid-template-columns: repeat(3, 1fr); /* 3-up on tablet+ */
-  }
-}
-
-.advantages__item {
+.how__label{ margin:0; color:var(--muted); }
+.how__step.is-active .how__num{
   background: var(--elevated);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: clamp(16px, 2.8vw, 24px);
-  display: grid;
-  gap: 10px;
-  min-height: 160px;
+  box-shadow: 0 0 0 2px var(--elevated) inset, 0 0 0 1px var(--text) inset;
+}
+.how__step.is-active .how__label{ color:var(--text); }
+
+@media (prefers-reduced-motion: reduce){ .how__rail-progress{ transition:none; } }
+
+/* === Advantages (3 horizontal cards) ====================== */
+.advantages { background: var(--bg); padding: clamp(28px, 5vw, 56px) 0; border-top:1px solid var(--line); }
+.advantages__title{ text-align:center; margin:0 0 clamp(20px,3vw,32px); font-size:clamp(20px,3.2vw,28px); }
+.advantages__list{
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:clamp(12px,2.5vw,20px);
+  grid-template-columns:1fr; /* stacked mobile */
+}
+@media (min-width:768px){ .advantages__list{ grid-template-columns: repeat(3, 1fr); } }
+.advantages__item{
+  background: var(--elevated); border:1px solid var(--line);
+  border-radius: var(--radius); padding: clamp(16px,2.8vw,24px);
+  display:grid; gap:10px; min-height:160px; align-content:start;
   box-shadow: 0 6px 16px var(--shadow);
 }
-
-.advantages__icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius);
+.advantages__icon{
+  width:36px; height:36px; border-radius: var(--radius);
   background: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
-  border: 1px solid var(--line);
+  border:1px solid var(--line);
 }
-
-.advantages__h3 { 
-  margin: 0; 
-  font-size: clamp(16px, 2.4vw, 18px); 
-}
-
-.advantages__p { 
-  margin: 0; 
-  color: var(--muted); 
-  line-height: 1.5; 
-}
-
-/* Subtle hover lift (optional) */
-@media (hover:hover) {
-  .advantages__item:hover {
-    transform: translateY(-2px);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-    box-shadow: 0 8px 18px var(--shadow);
-  }
+.advantages__h3{ margin:0; font-size:clamp(16px,2.4vw,18px); }
+.advantages__p{ margin:0; color:var(--muted); line-height:1.5; }
+@media (hover:hover){
+  .advantages__item:hover{ transform: translateY(-2px); transition: transform 180ms ease, box-shadow 180ms ease; box-shadow: 0 8px 18px var(--shadow); }
 }
 
 /* FAQ section */
